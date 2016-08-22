@@ -65,7 +65,7 @@ def bot_action(c, respond):
           if commentInfo != None and parent != None and message != None:
             if parent.author != None and message.author != None:
               if parent.author.name == message.author.name or parent.author.name is '[Deleted]':
-                commentInfo.edit('This comment used to be a bot correcting a users markdown, but they have fixed it.\n\n***\n^(I am a bot, and this action was performed automatically.) [^Feedback](https://np.reddit.com/message/compose?to=lucadem1313&subject=Link%20Fixer%20Bot "Contact to report issues, ask questions, or leave some feedback")')
+                commentInfo.edit('This used to be a comment from a bot correcting a user\'s markdown, but the user fixed it.\n\n***\n^(I am a bot, and this action was performed automatically.) [^Feedback](https://np.reddit.com/message/compose?to=lucadem1313&subject=Link%20Fixer%20Bot "Contact to report issues, ask questions, or leave some feedback")')
                 replyText = "Bot message deleted. Thank you " + choice(emojis)
               else:
                 replyText = "Error deleting comment. You may not be the author of the original comment. If you are, please try again."
