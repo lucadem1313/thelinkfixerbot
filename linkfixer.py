@@ -5,19 +5,10 @@ authorName = "thelinkfixerbot"
 USERAGENT = 'A user who helps people fix their links. Created by /u/lucadem1313.'
 
 r = praw.Reddit(USERAGENT)
-
-# post with original comments the bot replied to. Mainly used to make sure that errors people report are real,
-# and not just that the commentor fixed the link
 postThread = r.get_submission(submission_id='4vo43z')
 
 r.login(authorName, '***')
 
-
-# list to hold comments that are waiting replies
-commentQueue = []
-
-# list of items to remove from commentQueue
-commentsToDelete = []
 
 thanks = ["No problem", "My pleasure", "You're welcome", "No trouble", "Anytime"]
 emojis = [":P", ":)", "8-)", ":^)", ":3", ":D", ";)", ";/", ":\\", ":|", "xD"]
@@ -65,7 +56,7 @@ def bot_action(c, respond):
           if commentInfo != None and parent != None and message != None:
             if parent.author != None and message.author != None:
               if parent.author.name == message.author.name or parent.author.name is '[Deleted]':
-                commentInfo.edit('This used to be a comment from a bot correcting a user\'s markdown, but the user fixed it.\n\n***\n^(I am a bot, and this action was performed automatically.) [^Feedback](https://np.reddit.com/message/compose?to=lucadem1313&subject=Link%20Fixer%20Bot "Contact to report issues, ask questions, or leave some feedback")')
+                commentInfo.delete()
                 replyText = "Bot message deleted. Thank you " + choice(emojis)
               else:
                 replyText = "Error deleting comment. You may not be the author of the original comment. If you are, please try again."
@@ -145,9 +136,8 @@ def bot_action(c, respond):
 
 
     if someBrokenLinks:
-        message = '\n\n***\n^(I am a bot, and this action was performed automatically.)\n\n[^Feedback](https://np.reddit.com/message/compose?to=lucadem1313&subject=Link%20Fixer%20Bot "Contact to report issues, ask questions, or leave some feedback") ^| [^Formatting ^Help](https://np.reddit.com/wiki/commenting "Reddit.com markdown guide") ^| [^Subreddit](http://np.reddit.com/r/thelinkfixerbot "Subreddit for bot info") ^| [^Bot ^Code](https://github.com/lucadem1313/thelinkfixerbot "Code on GitHub")' # ^| [^Original ^Comment]('+pasteUrl+' "PasteBin of orinal comment")'
-
-        commentText = "Uh-oh **"+c.author.name+"**, it looks like there's **"+str(len(fixedUrls))+"** broken markdown links in your post. I've listed them below:\n\nFixed Link | Original Markdown | Fixed Markdown\n:---------:|:----------:|:----------:"
+        message = '\n\n***\n^(I am a bot, and this action was performed automatically.)\n\n[^Feedback](https://np.reddit.com/message/compose?to=lucadem1313&subject=Link%20Fixer%20Bot "Contact to report issues, ask questions, or leave some feedback") ^| [^Subreddit](http://np.reddit.com/r/thelinkfixerbot "Subreddit for bot info")' # ^| [^Original ^Comment]('+pasteUrl+' "PasteBin of orinal comment")'
+        commentText = 'Uh-oh **'+c.author.name+'**, it looks like there\'s **'+str(len(fixedUrls))+'** broken markdown links in [your post]({0} "Link to original comment before edit"). I\'ve listed them below:\n\nFixed Link | Original Markdown | Fixed Markdown\n:---------:|:----------:|:----------:'
         for link in fixedUrls:
             commentText += "\n" + link["mdLink"] + " | " + link["original"] + " | " + link["fixed"]
         commentText += message
@@ -156,8 +146,8 @@ def bot_action(c, respond):
             while True:
                 try:
                     reply = postThread.add_comment('[Original Comment]('+c.permalink.replace("//www.", "//np.")+') by '+c.author.name+'\n\n***\n\n>' + c.body.replace("\n", "\n>") + "\n\n***")
-                    newComment = c.reply(commentText + ' ^| [^Original ^Comment]('+reply.permalink.replace("//www.", "//np.")+' "Record of original comment")')
-                    newComment.edit(newComment.body + ' ^| [^Delete ^Comment](https://np.reddit.com/message/compose?to=thelinkfixerbot&subject=Delete%20Comment&message=delete%20comment:%20'+newComment.permalink+' "Just Click Send")')
+                    newComment = c.reply(commentText.format(reply.permalink.replace("//www.", "//np.")))
+                    newComment.edit(newComment.body + ' ^| [^Delete](https://np.reddit.com/message/compose?to=thelinkfixerbot&subject=To%20Delete%20Just%20Click%20Send&message=delete%20comment:%20'+newComment.permalink+' "Just Click Send")')
                     repliedPosts.append({"id":c.id, "reply":reply.id, "fixedLinks":len(fixedUrls)})
                     with open("linkfixer.json", "w") as f:
                         f.write(json.dumps({"posts":repliedPosts}))
