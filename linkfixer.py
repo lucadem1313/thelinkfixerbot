@@ -137,7 +137,7 @@ def bot_action(c, respond):
 
     if someBrokenLinks:
         message = '\n\n***\n^(I am a bot, and this action was performed automatically.)\n\n[^Feedback](https://np.reddit.com/message/compose?to=lucadem1313&subject=Link%20Fixer%20Bot "Contact to report issues, ask questions, or leave some feedback") ^| [^Subreddit](http://np.reddit.com/r/thelinkfixerbot "Subreddit for bot info")' # ^| [^Original ^Comment]('+pasteUrl+' "PasteBin of orinal comment")'
-        commentText = 'Uh-oh **'+c.author.name+'**, it looks like there\'s **'+str(len(fixedUrls))+'** broken markdown links in [your post]({0} "Link to original comment before edit"). I\'ve listed them below:\n\nFixed Link | Original Markdown | Fixed Markdown\n:---------:|:----------:|:----------:'
+        commentText = 'Uh-oh **'+c.author.name+'**, it looks like there\'s **'+str(len(fixedUrls))+'** broken markdown link(s) in [your post]({0} "Link to original comment before edit"). I\'ve listed them below:\n\nFixed Link | Original Markdown | Fixed Markdown\n:---------:|:----------:|:----------:'
         for link in fixedUrls:
             commentText += "\n" + link["mdLink"] + " | " + link["original"] + " | " + link["fixed"]
         commentText += message
